@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 const Filter = ({newFilter, setNewFilter}) => {
   const handleNewFilter = (event) => setNewFilter(event.target.value)
@@ -20,7 +21,7 @@ const AddContact = ({newName, setNewName, newNumber, setNewNumber, persons, setP
     event.preventDefault()
     const personObject = {
       name: newName,
-      phoneNumber: newNumber,
+      number: newNumber,
       id: persons.length + 1
     }
 
@@ -64,22 +65,29 @@ const FilteredContacts = ({persons, newFilter}) => {
   return (
       <div>
         {filteredPersons.map(person => 
-        <div key={person.id}>{person.name} {person.phoneNumber}</div>
+        <div key={person.id}>{person.name} {person.number}</div>
       )}
       </div>
   )
 }
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', phoneNumber: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', phoneNumber: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', phoneNumber: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', phoneNumber: '39-23-6423122', id: 4 }
-  ]) 
+  const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+
+ const hook = () => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        setPersons(response.data)
+      })
+  }
+
+  useEffect(hook, [])
   
   return (
     <div>
