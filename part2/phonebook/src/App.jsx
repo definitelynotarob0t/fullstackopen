@@ -1,5 +1,24 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
+
+const Notification = ({ message }) => {
+  if (message === "") {
+    return null
+  }
+  if (message.startsWith("Information of")) {
+    return (
+      <div className='error'>
+      {message}
+    </div>
+    )
+  }
+  return (
+    <div className='success'>
+      {message}
+    </div>
+  )
+
+}
 
 const Filter = ({newFilter, setNewFilter}) => {
   const handleNewFilter = (event) => setNewFilter(event.target.value)
@@ -15,26 +34,31 @@ const Filter = ({newFilter, setNewFilter}) => {
   )
 }
 
-const AddContact = ({newName, setNewName, newNumber, setNewNumber, persons, setPersons}) => {
+const AddContact = ({newName, setNewName, newNumber, setNewNumber, persons, updateNumber, createPerson}) => {
 
   const addPerson = (event) => {
     event.preventDefault()
     const personObject = {
       name: newName,
-      number: newNumber,
-      id: persons.length + 1
+      number: newNumber
     }
 
     const mostRecentName = personObject.name
-    const personNames = (persons.map(person => person.name))
+    const existingNames = (persons.map(person => person.name))
 
-    if (personNames.includes(mostRecentName)) {
-      window.alert(`${newName} is already added to phonebook`)
+
+    if (existingNames.includes(mostRecentName)) {
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
+      ) { 
+        const personToUpdate = persons.find((person) => person.name === newName)
+        updateNumber(personObject, personToUpdate.id)
+      } 
     } else {
-      setPersons(persons.concat(personObject))
+      createPerson(personObject)
     }
+
     setNewName('')
-    setNewNumber('')    
+    setNewNumber('')
   }
 
   const handleNewName = (event) => setNewName(event.target.value)
@@ -59,13 +83,22 @@ const AddContact = ({newName, setNewName, newNumber, setNewNumber, persons, setP
 
 }
 
-const FilteredContacts = ({persons, newFilter}) => {
+const FilteredContacts = ({persons, newFilter, deletePerson}) => {
+
   const filteredPersons = persons.filter(person => person.name.toLowerCase().includes(newFilter.toLowerCase()))
 
+  const confirmDelete = (person) => {
+    if (window.confirm(`Delete ${person.name}?`)) {
+      deletePerson(person.id, persons)
+    } 
+  }
   return (
       <div>
         {filteredPersons.map(person => 
-        <div key={person.id}>{person.name} {person.number}</div>
+        <div key={person.id}>
+          {person.name} {person.number}
+          <button onClick={() => confirmDelete(person)}>delete</button>
+          </div>
       )}
       </div>
   )
@@ -76,30 +109,74 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
 
- const hook = () => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
+  useEffect(() => {
+    personService
+      .getAll()
       .then(response => {
-        console.log('promise fulfilled')
         setPersons(response.data)
+      })
+  }, [setPersons])
+
+  const createPerson = (personObject) => {
+    personService
+    .create(personObject)
+    .then(response => {
+      setPersons(persons.concat(response.data))
+      setErrorMessage( `Added ${personObject.name}`)
+      setTimeout(() => {
+        setErrorMessage("")
+      }, 5000)
       })
   }
 
-  useEffect(hook, [])
+  const deletePerson = (id, persons) => {
+    personService
+    .remove(id)
+    .then(() => {
+      setPersons(persons => persons.filter(person => person.id !== id))
+    })
+  }
+
+  const updateNumber = (personObject, id) => {
+    const index = persons.findIndex(person => person.id === id)
+    const updatedPerson = { ...persons[index], number: personObject.number }
   
+    personService
+    .update(id, personObject)
+    .then(() => {
+      setPersons(persons => persons.map(person => person.id !== id ? person : updatedPerson))
+      setErrorMessage(`${personObject.name}'s phone number has been updated`)
+      setTimeout(() => {
+        setErrorMessage("")
+      }, 5000)
+    })
+      .catch(error => {
+        setErrorMessage(`Information of ${personObject.name} has already been removed from server`)
+        setTimeout(() => {
+          setErrorMessage("")
+        }, 5000)
+      })
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} />
       <Filter newFilter={newFilter} setNewFilter={setNewFilter}/>
       <h3>Add a new contact</h3>
       <AddContact
-      newName={newName} setNewName={setNewName} newNumber={newNumber} 
-      setNewNumber={setNewNumber} persons={persons} setPersons={setPersons} 
+      newName={newName} 
+      setNewName={setNewName} 
+      newNumber={newNumber} 
+      setNewNumber={setNewNumber} 
+      persons={persons} 
+      updateNumber={updateNumber}
+      createPerson={createPerson} 
       />
       <h3>Contacts</h3>
-      <FilteredContacts persons={persons} newFilter={newFilter}/>
+      <FilteredContacts persons={persons} newFilter={newFilter} deletePerson={deletePerson}/>
     </div>
   )
 }
