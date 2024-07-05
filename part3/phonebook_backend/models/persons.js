@@ -3,8 +3,12 @@ const mongoose = require('mongoose')
 
 mongoose.set('strictQuery',false)
 
-const url = process.env.MONGODB_URL
-console.log('connecting to', url)
+const url = process.env.MONGODB_URI
+if (!url) {
+  console.error('MONGODB_URI is not defined');
+  process.exit(1);
+}
+console.log('Attempting to connect to MongoDB')
 
 mongoose.connect(url)
   .then(result => {

@@ -1,6 +1,8 @@
-This repository contains the backend of a phonebook application. I followed FullStackOpens' instructions for writing this application (courses: part 2 and part 3).
+This repository contains the fullstack of a phonebook application. Users can add new contacts to the phonebook, delete existing contacts, or update existing contacts. Contacts can also be filtered with a filter input. Contacts are saved to MongoDB.
 
-The backend homepage has been deployed at https://phonebook-backend-quiet-bush-1747.fly.dev/.
+I followed FullStackOpens' instructions for writing this application (courses: part 2 and part 3).
 
-To access the 'persons' object visit: https://phonebook-backend-quiet-bush-1747.fly.dev/api/persons
+The application has been deployed at https://phonebook-backend-quiet-bush-1747.fly.dev/.
+
+To access the backend databse, visit https://phonebook-backend-quiet-bush-1747.fly.dev/api/persons
 
