@@ -5,19 +5,19 @@ const Notification = ({ message }) => {
   if (message === "") {
     return null
   }
-  if (message.startsWith("Information of")) {
+  else if (message.startsWith("Information of") || message.startsWith("Contact's name")) {
     return (
       <div className='error'>
       {message}
     </div>
     )
   }
+
   return (
     <div className='success'>
       {message}
     </div>
   )
-
 }
 
 const Filter = ({newFilter, setNewFilter}) => {
@@ -129,7 +129,14 @@ const App = () => {
         setErrorMessage("")
       }, 5000)
       })
-  }
+    .catch(error => {
+      console.log(error.response.data.error)
+      setErrorMessage(`Contact's name must be at least 3 characters long and phone number must be valid`)
+      setTimeout(() => {
+        setErrorMessage("")
+      }, 5000)
+  })
+}
 
   const deletePerson = (id, persons) => {
     personService
