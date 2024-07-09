@@ -25,8 +25,8 @@ const favouriteBlog = (blogs) => {
             indexOfHighest = i
         }
     }
-    return blogs[indexOfHighest]?
-    {
+    return blogs[indexOfHighest]
+    ?   {
         title: blogs[indexOfHighest].title,
         author: blogs[indexOfHighest].author,
         likes: currentHighest,
@@ -54,8 +54,8 @@ const mostBlogs = (blogs) => {
             authorWithMost = author
         }
     }
-    return currentMost===0?
-    {}
+    return currentMost===0
+    ? {}
     : {
         author: authorWithMost,
         blogs: currentMost
@@ -74,13 +74,12 @@ const mostLikes = (blogs) => {
         }
     }
 
-    return blogs[indexMax] ?
-    {
+    return blogs[indexMax] 
+    ? {
         author: blogs[indexMax].author,
         likes: blogs[indexMax].likes
     }
-    :
-    {}
+    : {}
 }
 
 module.exports = {
