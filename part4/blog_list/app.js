@@ -1,5 +1,4 @@
 require('dotenv').config()
-
 const config = require('./utils/config')
 const express = require('express')
 const app = express()
@@ -8,6 +7,8 @@ const blogsRouter = require('./controllers/blogs')
 const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
 const mongoose = require('mongoose')
+const usersRouter = require('./controllers/users')
+const loginRouter = require('./controllers/login')
 
 mongoose.set('strictQuery', false)
 
@@ -26,8 +27,12 @@ app.use(express.static('dist'))
 app.use(express.json())
 app.use(middleware.requestLogger)
 
+// Public routes (private routes handled in blogs.js)
+app.use('/api/blogs', blogsRouter) // Public access for fetching blogs
+app.use('/api/users', usersRouter) // Public access for users
+app.use('/api/login', loginRouter) // Public access for login
 
-app.use('/api/blogs', blogsRouter)
+// Error handling middleware
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 
