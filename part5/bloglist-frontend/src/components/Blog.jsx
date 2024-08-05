@@ -33,18 +33,21 @@ const Blog = ({ blog, user, updateTrigger, setUpdateTrigger }) => {
 
   return (
     <div className='blog'>
-      <div style={hideWhenVisible}>
-        {blog.title} -- by {blog.author}    <button onClick={toggleVisibility}> view</button>
+      <div style={hideWhenVisible} className='blogDefault'>
+        {blog.title} -- by {blog.author}    <button onClick={toggleVisibility} data-testid='view'> view</button>
       </div>
-      <div style={showWhenVisible}>
+
+      {visible && (
+      <div style={showWhenVisible} className='blogDetailed'>
         <div>{blog.title} -- by {blog.author}   <button onClick={toggleVisibility}> hide</button></div>
         <div>{blog.url}</div>
-        <div>likes: {likes}  <button onClick = {handleClick}>like</button></div>
+        <div>likes: {likes}  <button onClick = {handleClick} data-testid='like'>like</button></div>
         <div>{blog.user.name}</div>
         {blog.user.name === user.name && (
-          <button onClick={confirmDelete}>remove</button>
+          <button onClick={confirmDelete} data-testid='remove'>remove</button>
         )}
       </div>
+      )}
     </div>
 
   )}

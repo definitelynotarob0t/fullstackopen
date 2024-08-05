@@ -13,9 +13,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
   const [updateTrigger, setUpdateTrigger] = useState(false) // State to trigger re-fetching blogs
 
@@ -98,6 +95,7 @@ const App = () => {
             <div>
               username
               <input
+                data-testid='username'
                 type="text"
                 value={username}
                 name="Username"
@@ -107,13 +105,14 @@ const App = () => {
             <div>
         password
               <input
+                data-testid='password'
                 type="password"
                 value={password}
                 name="Password"
                 onChange={({ target }) => setPassword(target.value)}
               />
             </div>
-            <button type="submit">login</button>
+            <button type="submit" data-testid='login'>login</button>
           </form>
         </div>
         :
@@ -122,19 +121,13 @@ const App = () => {
           <Notification message={errorMessage} />
           <p>
             <i>{user.name} logged-in </i>
-            <button onClick={handleLogout}>logout </button>
+            <button onClick={handleLogout} data-testid='logout'>logout </button>
           </p>
           {blogForm()}
-          <Togglable buttonLabel="Add blog" ref={newBlogFormRef}>
+          <Togglable buttonLabel="Add blog" ref={newBlogFormRef} data-testid='add_blog'>
             <NewBlogForm
               user={user}
               setUser={setUser}
-              title={title}
-              setTitle={setTitle}
-              author={author}
-              setAuthor={setAuthor}
-              url={url}
-              setUrl={setUrl}
               errorMessage={errorMessage}
               setErrorMessage={setErrorMessage}
               blogs={blogs}

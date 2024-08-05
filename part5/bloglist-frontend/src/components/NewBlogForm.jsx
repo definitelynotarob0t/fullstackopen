@@ -1,23 +1,27 @@
 import blogService from '../services/blogs'
-
+import { useState } from 'react'
 
 const NewBlogForm = (props) => {
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
+
   const handleBlogCreation = async (event) => {
     event.preventDefault()
 
     try {
       const newBlog = await blogService.createBlog({
-        title: props.title,
-        author: props.author,
-        url: props.url
+        title,
+        author,
+        url
       })
       props.setUpdateTrigger(!props.updateTrigger)
 
       props.setBlogs([...props.blogs, newBlog])
-      props.setTitle('')
-      props.setAuthor('')
-      props.setUrl('')
-      props.setErrorMessage(`New blog created: ${props.title}`)
+      setTitle('')
+      setAuthor('')
+      setUrl('')
+      props.setErrorMessage(`New blog created: ${title}`)
       setTimeout(() => {
         props.setErrorMessage(null)
       }, 5000)
@@ -34,19 +38,19 @@ const NewBlogForm = (props) => {
 
   return (
     <>
-      <form onSubmit={handleBlogCreation}>
+      <form onSubmit={handleBlogCreation} className="newBlogForm">
         <h2>Add new blog</h2>
         <p>
-            title: <input value={props.title} onChange={({ target }) => props.setTitle(target.value)} />
+            title: <input data-testid="title-input" value={title} onChange={({ target }) => setTitle(target.value)} />
         </p>
         <p>
-            author: <input value={props.author} onChange={({ target }) => props.setAuthor(target.value)} />
+            author: <input data-testid="author-input" value={author} onChange={({ target }) => setAuthor(target.value)} />
         </p>
         <p>
-            url: <input value={props.url} onChange={({ target }) => props.setUrl(target.value)} />
+            url: <input data-testid="url-input" value={url} onChange={({ target }) => setUrl(target.value)} />
         </p>
         <div>
-          <button type="submit" onClick={handleBlogCreation}>add</button>
+          <button data-testid="add-button" type="submit" onClick={handleBlogCreation}>add</button>
         </div>
       </form>
     </>
