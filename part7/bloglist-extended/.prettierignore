@@ -1,0 +1,10 @@
+# Ignore artifacts:
+node_modules
+test-results
+tests
+.eslint.cjs
+.eslintignore
+.gitignore
+playwright-report
+index.html
+README.md
