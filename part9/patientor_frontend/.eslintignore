@@ -1,0 +1,8 @@
+vite.config.ts
+index.html
+package.json
+package-lock.json
+README.md
+tsconfig.json
+tsconfig.node.json
+node_modules
